@@ -66,17 +66,28 @@ const UploadData = () => {
     setIsUploading(true);
     
     try {
-      // Simulate API call - in real implementation, this would be a POST to /upload
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const formData = new FormData();
+      formData.append('file', selectedFile);
       
-      // Mock successful response
-      setAnalysisData(mockAnalysisData);
+      // Replace 'YOUR_BACKEND_URL' with your actual backend URL
+      const response = await fetch('YOUR_BACKEND_URL/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      setAnalysisData(data);
       
       toast({
         title: "Upload successful",
-        description: `Successfully analyzed ${mockAnalysisData.length} records from ${selectedFile.name}`,
+        description: `Successfully analyzed ${data.length} records from ${selectedFile.name}`,
       });
     } catch (error) {
+      console.error('Upload error:', error);
       toast({
         title: "Upload failed",
         description: "There was an error processing your file. Please try again.",
